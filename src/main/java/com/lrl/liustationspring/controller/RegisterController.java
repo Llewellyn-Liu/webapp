@@ -51,4 +51,6 @@ public class RegisterController {
         RegisterService.getInstance().register(returnValue);
         return RegisterService.getInstance().getRegisteredUser(username);
     }
+
+    //Test comment
 }
