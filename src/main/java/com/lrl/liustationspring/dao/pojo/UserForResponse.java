@@ -1,9 +1,10 @@
 package com.lrl.liustationspring.dao.pojo;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
-public class User {
+public class UserForResponse {
+
+
 
     private Integer id;
 
@@ -11,27 +12,23 @@ public class User {
 
     private String lastname;
     private String username;
-
-    private String password;
-
     private Timestamp accountCreated;
 
     private Timestamp accountLastModified;
 
-    private String token;
+    private String Token;
 
-    public User() {
+    public UserForResponse() {
     }
 
-    public User(Integer id, String firstname, String lastname, String username, String password, Timestamp accountCreated, Timestamp accountLastModified, String token) {
+    public UserForResponse(Integer id, String firstname, String lastname, String username, Timestamp accountCreated, Timestamp accountLastModified, String token) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
-        this.password = password;
         this.accountCreated = accountCreated;
         this.accountLastModified = accountLastModified;
-        this.token = token;
+        Token = token;
     }
 
     public Integer getId() {
@@ -66,14 +63,6 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Timestamp getAccountCreated() {
         return accountCreated;
     }
@@ -91,11 +80,11 @@ public class User {
     }
 
     public String getToken() {
-        return token;
+        return Token;
     }
 
     public void setToken(String token) {
-        this.token = token;
+        Token = token;
     }
 
     @Override
@@ -105,14 +94,9 @@ public class User {
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", accountCreated=" + accountCreated +
                 ", accountLastModified=" + accountLastModified +
-                ", Token='" + token + '\'' +
+                ", Token='" + Token + '\'' +
                 '}';
-    }
-
-    public UserForResponse parseFormat(){
-        return new UserForResponse(id,firstname,lastname,username,accountCreated,accountLastModified,token);
     }
 }

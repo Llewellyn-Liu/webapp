@@ -19,7 +19,7 @@ public class LoginController {
     @RequestMapping(value = "/Login", method = RequestMethod.POST)
     public User login(@RequestParam(value = "username")String username, @RequestParam("password")String password){
 
-        logger.info("username: "+ username +", pswd: "+password);
+        logger.debug("username: "+ username +", pswd: "+password);
 
         boolean hasVerifiedUser = LoginService.getInstance().loginUser(username,password);
         if(hasVerifiedUser){

@@ -3,6 +3,7 @@ package com.lrl.liustationspring.controller;
 
 import com.lrl.liustationspring.controller.tools.BCryptor;
 import com.lrl.liustationspring.dao.pojo.User;
+import com.lrl.liustationspring.dao.pojo.UserForResponse;
 import com.lrl.liustationspring.service.DataManipulationService;
 import com.lrl.liustationspring.service.RegisterService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,13 +67,23 @@ public class RESTController {
 
 
     @RequestMapping(value = "/data/user/{id}", method = RequestMethod.GET)
-    private User userGetter(@PathVariable int id) {
+    private UserForResponse userGetter(@PathVariable int id, HttpServletRequest request, HttpServletResponse response) {
         User user = DataManipulationService.getInstance().getUserById(id);
-        return user;
+        if(user == null) {
+            logger.info("No id found in database.");
+            response.setStatus(403);
+            return null;
+        }
+        if(authentication(request, user.getUsername())) return user.parseFormat();
+        else {
+            logger.info("authentication failed.");
+            response.setStatus(403);
+            return null;
+        }
     }
 
     @RequestMapping(value = "data/user", method = RequestMethod.POST)
-    public User userCreator(@RequestParam(value = "firstname") String firstname,
+    public UserForResponse userCreator(@RequestParam(value = "firstname") String firstname,
                             @RequestParam(value = "lastname") String lastname,
                             @RequestParam(value = "username", defaultValue = "NotAUser") String username,
                             @RequestParam(value = "password", defaultValue = "NotAPassword") String password) {
@@ -83,12 +94,12 @@ public class RESTController {
 
         if (!RegisterService.getInstance().usernameValidation(username)) {
             return new User(null, firstname, lastname, "N/A", "password",
-                    currentTimeDateFormat, currentTimeDateFormat, "R failed - Invalid name");
+                    currentTimeDateFormat, currentTimeDateFormat, "R failed - Invalid name").parseFormat();
         }
 
         if (!RegisterService.getInstance().passwordValidation(password)) {
             return new User(null, firstname, lastname, username, "N/A",
-                    currentTimeDateFormat, currentTimeDateFormat, "R failed - Invalid password");
+                    currentTimeDateFormat, currentTimeDateFormat, "R failed - Invalid password").parseFormat();
         }
 
         //BCrypt encryption
@@ -98,11 +109,11 @@ public class RESTController {
         User returnValue = new User(null, firstname, lastname, username, passwordHash,
                 currentTimeDateFormat, currentTimeDateFormat, "Registered");
         RegisterService.getInstance().register(returnValue);
-        return RegisterService.getInstance().getRegisteredUser(username);
+        return RegisterService.getInstance().getRegisteredUser(username).parseFormat();
     }
 
     @RequestMapping(value = "/data/user/{id}", method = RequestMethod.PUT)
-    public User userUpdater(@PathVariable int id, @RequestParam(value = "firstname")String firstname, @RequestParam(value = "lastname")String lastname,
+    public UserForResponse userUpdater(@PathVariable int id, @RequestParam(value = "firstname")String firstname, @RequestParam(value = "lastname")String lastname,
                             @RequestParam(value = "password")String password, @RequestParam(value = "username")String username,HttpServletRequest request, HttpServletResponse response){
 
 
@@ -116,17 +127,21 @@ public class RESTController {
             return null;
         }
 
-        //If the username doesn't match, return 400 status;
+        //Check if the ids match and if user try to modify username, true to return 400 status;
+        logger.info("Sent id:" + id + ", request id:"+ user.getId()+" result:"+user.getUsername().equals(username));
         if(!user.getUsername().equals(username)){
             logger.info("User try to modify username.");
-            response.setStatus(400);
+            response.setStatus(403);
         }
 
         //If authentication fails, return null
         if(!authentication(request, user.getUsername())) {
             logger.info("WWW-Authenticate verification failed");
+            response.setStatus(401);
             return null;
         }
+
+        //
 
         user.setFirstname(firstname);
         user.setLastname(lastname);
@@ -134,21 +149,21 @@ public class RESTController {
         user.setAccountLastModified(new Timestamp(System.currentTimeMillis()));
 
         DataManipulationService.getInstance().updateUser(user);
-        return DataManipulationService.getInstance().getUserById(user.getId());
+        return DataManipulationService.getInstance().getUserById(user.getId()).parseFormat();
     }
 
-
-    @RequestMapping(value = "/v1/user", method = RequestMethod.GET)
-    public User retrieveUserInfo(@RequestParam(value = "id") String id) {
-        logger.info("User id: " + id);
-        return new DataManipulationService().getUserById(Integer.parseInt(id));
-    }
-
-    @RequestMapping(value = "/v1/user/*", method = RequestMethod.GET)
-    public User retrieveUserInfoFromUrl(@RequestParam(value = "id") String id) {
-        logger.info("User id: " + id);
-        return new DataManipulationService().getUserById(Integer.parseInt(id));
-    }
+//
+//    @RequestMapping(value = "/v1/user", method = RequestMethod.GET)
+//    public User retrieveUserInfo(@RequestParam(value = "id") String id) {
+//        logger.info("User id: " + id);
+//        return new DataManipulationService().getUserById(Integer.parseInt(id));
+//    }
+//
+//    @RequestMapping(value = "/v1/user/*", method = RequestMethod.GET)
+//    public User retrieveUserInfoFromUrl(@RequestParam(value = "id") String id) {
+//        logger.info("User id: " + id);
+//        return new DataManipulationService().getUserById(Integer.parseInt(id));
+//    }
 
 
     /**

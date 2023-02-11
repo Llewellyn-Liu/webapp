@@ -29,6 +29,7 @@ public class UserREST {
         properties.put("time1", new AccountLastModifiedREST(accountLastModified, true, false));
         properties.put("token", new TokenREST(token, true, false));
 
+
     }
 
     public static String getType() {

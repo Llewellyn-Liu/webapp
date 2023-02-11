@@ -26,10 +26,19 @@ public class WebController {
 
         logger.info("Error happened when open link "+request.getRequestURL()+". Default redirection for /error to error.html");
         try {
+            Thread.sleep(2000);
             response.sendRedirect("/error.html");
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/data/healthz")
+    public void healthCheck(HttpServletResponse response){
+        logger.info("health check triggered.");
+        response.setStatus(200);
     }
 
 }
