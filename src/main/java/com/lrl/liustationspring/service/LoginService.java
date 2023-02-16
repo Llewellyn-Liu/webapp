@@ -1,14 +1,11 @@
 package com.lrl.liustationspring.service;
 
-import com.lrl.liustationspring.dao.SqlConnection;
 import com.lrl.liustationspring.dao.mapper.UserMapper;
 import com.lrl.liustationspring.dao.pojo.User;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-
-import java.util.List;
 
 public class LoginService {
     Logger logger = LoggerFactory.getLogger(LoginService.class);

@@ -1,4 +1,4 @@
-package com.lrl.liustationspring.dao;
+package com.lrl.liustationspring.service;
 
 
 import org.apache.ibatis.io.Resources;

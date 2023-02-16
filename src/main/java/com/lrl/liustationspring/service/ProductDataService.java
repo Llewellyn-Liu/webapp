@@ -1,6 +1,5 @@
 package com.lrl.liustationspring.service;
 
-import com.lrl.liustationspring.dao.SqlConnection;
 import com.lrl.liustationspring.dao.mapper.ProductMapper;
 import com.lrl.liustationspring.dao.pojo.Product;
 import org.apache.ibatis.session.SqlSession;

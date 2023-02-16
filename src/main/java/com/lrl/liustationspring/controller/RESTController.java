@@ -86,18 +86,21 @@ public class RESTController {
     public UserForResponse userCreator(@RequestParam(value = "firstname") String firstname,
                             @RequestParam(value = "lastname") String lastname,
                             @RequestParam(value = "username", defaultValue = "NotAUser") String username,
-                            @RequestParam(value = "password", defaultValue = "NotAPassword") String password) {
+                            @RequestParam(value = "password", defaultValue = "NotAPassword") String password,
+                                       HttpServletResponse response) {
         logger.info("Register application received: username = " + username + ", firstname = " + firstname
                 + ", lastname = " + lastname + ",token = " + password);
 
         Timestamp currentTimeDateFormat = new Timestamp(System.currentTimeMillis());
 
         if (!RegisterService.getInstance().usernameValidation(username)) {
+            response.setStatus(400);
             return new User(null, firstname, lastname, "N/A", "password",
                     currentTimeDateFormat, currentTimeDateFormat, "R failed - Invalid name").parseFormat();
         }
 
         if (!RegisterService.getInstance().passwordValidation(password)) {
+            response.setStatus(400);
             return new User(null, firstname, lastname, username, "N/A",
                     currentTimeDateFormat, currentTimeDateFormat, "R failed - Invalid password").parseFormat();
         }
@@ -108,6 +111,7 @@ public class RESTController {
 
         User returnValue = new User(null, firstname, lastname, username, passwordHash,
                 currentTimeDateFormat, currentTimeDateFormat, "Registered");
+
         RegisterService.getInstance().register(returnValue);
         return RegisterService.getInstance().getRegisteredUser(username).parseFormat();
     }

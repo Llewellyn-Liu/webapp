@@ -1,7 +1,6 @@
 package com.lrl.liustationspring.service;
 
 import com.lrl.liustationspring.dao.UserInfoConfig;
-import com.lrl.liustationspring.dao.SqlConnection;
 import com.lrl.liustationspring.dao.mapper.UserMapper;
 import com.lrl.liustationspring.dao.pojo.User;
 import org.apache.ibatis.session.SqlSession;
@@ -43,8 +42,9 @@ public class RegisterService {
      */
     public boolean usernameValidation(String username) {
 
-        //check if info missing
-        if (username == "NotAUsername") {
+        //check if info missing or wrong format
+        String REGEX="^\\w+((-\\w+)|(\\.\\w+))*@\\w+(\\.\\w{2,3}){1,3}$";
+        if (username == "NotAUsername" || !username.matches(REGEX)) {
             logger.info("Not a valid username from frontend.");
             return false;
         }
@@ -54,6 +54,8 @@ public class RegisterService {
             logger.info("Username already taken.");
             return false;
         }
+
+
 
         //Other validation check here
 
